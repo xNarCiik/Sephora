@@ -3,6 +3,7 @@ package com.dms.sephoratest.presentation
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -22,7 +23,9 @@ import com.dms.sephoratest.R
 import com.dms.sephoratest.presentation.main.MainScreen
 import com.dms.sephoratest.presentation.productdetail.ProductDetailScreen
 import com.dms.sephoratest.presentation.util.Screen
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     @OptIn(ExperimentalMaterial3Api::class)
@@ -55,7 +58,9 @@ class MainActivity : ComponentActivity() {
                         startDestination = Screen.MainScreen.route
                     ) {
                         composable(route = Screen.MainScreen.route) {
-                            MainScreen { navController.navigate(route = Screen.ProductDetailScreen.route) }
+                            MainScreen(
+                                onProductClick = { navController.navigate(route = Screen.ProductDetailScreen.route) }
+                            )
                         }
                         composable(route = Screen.ProductDetailScreen.route) {
                             ProductDetailScreen()

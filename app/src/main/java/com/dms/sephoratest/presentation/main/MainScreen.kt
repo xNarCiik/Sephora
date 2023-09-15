@@ -15,31 +15,50 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.dms.sephoratest.R
 
 @Composable
-fun MainScreen(onProductClick: () -> Unit) {
-    MainContent(onProductClick = onProductClick)
+fun MainScreen(
+    mainViewModel: MainViewModel = hiltViewModel(),
+    onProductClick: () -> Unit
+) {
+    val viewState by mainViewModel.viewState.collectAsState()
+
+    MainContent(
+        productsList = viewState.productsList,
+        onQueryChanged = mainViewModel::filterByName,
+        onProductClick = onProductClick
+    )
 }
 
 @Composable
-private fun MainContent(onProductClick: () -> Unit) {
+private fun MainContent(
+    productsList: List<String>,
+    onQueryChanged: (String) -> Unit,
+    onProductClick: () -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(all = 16.dp)
     ) {
-        SearchBar()
-        3222232
+        SearchBar(
+            onQueryChanged = onQueryChanged
+        )
 
         ProductsList(
-            productsList = arrayListOf("Test", "Test2", "Test3", "Test4", "Test5"),
+            modifier = Modifier.padding(top = 8.dp),
+            productsList = productsList,
             onProductClick = onProductClick
         )
     }
@@ -47,13 +66,18 @@ private fun MainContent(onProductClick: () -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SearchBar() {
+private fun SearchBar(
+    onQueryChanged: (String) -> Unit
+) {
     var text by remember { mutableStateOf(value = "") }
 
     TextField(
         value = text,
-        onValueChange = { text = it },
-        label = { Text(text = "Search") },
+        onValueChange = {
+            text = it
+            onQueryChanged(it)
+        },
+        label = { Text(text = stringResource(R.string.search)) },
         leadingIcon = { Icon(imageVector = Icons.Filled.Search, contentDescription = null) },
         modifier = Modifier.fillMaxWidth()
     )
@@ -61,10 +85,12 @@ private fun SearchBar() {
 
 @Composable
 private fun ProductsList(
+    modifier: Modifier = Modifier,
     productsList: List<String>,
     onProductClick: () -> Unit
 ) {
     LazyVerticalGrid(
+        modifier = modifier,
         columns = GridCells.Fixed(count = 2)
     ) {
         items(productsList) { product ->
@@ -87,5 +113,5 @@ private fun ProductItem(
 @Preview
 @Composable
 private fun MainContentPreview() {
-    MainContentPreview()
+    // TODO
 }
