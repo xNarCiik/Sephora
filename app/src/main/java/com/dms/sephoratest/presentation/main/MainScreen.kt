@@ -1,13 +1,9 @@
 package com.dms.sephoratest.presentation.main
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dms.sephoratest.R
+import com.dms.sephoratest.presentation.main.productslist.ProductsList
 
 @Composable
 fun MainScreen(
@@ -43,14 +40,14 @@ fun MainScreen(
 
 @Composable
 private fun MainContent(
-    productsList: List<String>,
+    productsList: List<ProductUiModel>,
     onQueryChanged: (String) -> Unit,
     onProductClick: () -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(all = 16.dp)
+            .padding(all = 8.dp)
     ) {
         SearchBar(
             onQueryChanged = onQueryChanged
@@ -83,35 +80,12 @@ private fun SearchBar(
     )
 }
 
-@Composable
-private fun ProductsList(
-    modifier: Modifier = Modifier,
-    productsList: List<String>,
-    onProductClick: () -> Unit
-) {
-    LazyVerticalGrid(
-        modifier = modifier,
-        columns = GridCells.Fixed(count = 2)
-    ) {
-        items(productsList) { product ->
-            ProductItem(
-                modifier = Modifier.clickable { onProductClick() },
-                product
-            )
-        }
-    }
-}
-
-@Composable
-private fun ProductItem(
-    modifier: Modifier,
-    product: String
-) {
-    Text(modifier = modifier, text = product)
-}
-
 @Preview
 @Composable
 private fun MainContentPreview() {
-    // TODO
+    MainContent(
+        productsList = ProductsListMock,
+        onQueryChanged = { },
+        onProductClick = { }
+    )
 }

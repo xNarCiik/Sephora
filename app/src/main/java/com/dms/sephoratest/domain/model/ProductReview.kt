@@ -1,4 +1,4 @@
-package com.dms.sephoratest.domain.model.productreview
+package com.dms.sephoratest.domain.model
 
 data class ProductReview(
     val product_id: Long,

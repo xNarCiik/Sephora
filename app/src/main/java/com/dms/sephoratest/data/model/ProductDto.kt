@@ -1,6 +1,6 @@
-package com.dms.sephoratest.domain.model.product
+package com.dms.sephoratest.data.model
 
-data class Product(
+data class ProductDto(
     val product_id: Long,
     val product_name: String,
     val description: String,

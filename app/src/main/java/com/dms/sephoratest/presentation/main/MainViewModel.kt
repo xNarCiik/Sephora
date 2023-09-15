@@ -2,21 +2,25 @@ package com.dms.sephoratest.presentation.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dms.sephoratest.data.api.ProductsApi
+import com.dms.sephoratest.data.model.mapper.toDomain
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
+    private val productsApi: ProductsApi,
 ) : ViewModel() {
 
     private var _loading = MutableStateFlow(value = false)
-    private var _productsList = MutableStateFlow<List<String>>(value = arrayListOf())
+    private var _productsList = MutableStateFlow<List<ProductUiModel>>(value = arrayListOf())
 
-    private var productsListFull = arrayListOf<String>()
+    private var productsListFull = listOf<ProductUiModel>()
 
     @Suppress("UNCHECKED_CAST")
     val viewState = combine(
@@ -24,7 +28,7 @@ class MainViewModel @Inject constructor(
         _productsList
     ) { params ->
         val loading = params[0] as Boolean
-        val productsList = params[1] as List<String>
+        val productsList = params[1] as List<ProductUiModel>
 
         MainUiModel(
             loading = loading,
@@ -33,11 +37,29 @@ class MainViewModel @Inject constructor(
     }.stateIn(viewModelScope, SharingStarted.Lazily, MainUiModel())
 
     init {
-        productsListFull = arrayListOf("Test", "Test2", "Test3", "Test4", "Test5")
-        _productsList.value = productsListFull
+        viewModelScope.launch {
+            // Transform ProductsDto list to ProductUiModel list
+            _loading.value = true
+            productsListFull = productsApi.getProductsList().map { it.toDomain() }.map {
+                ProductUiModel(
+                    name = it.name,
+                    description = it.description,
+                    price = it.price,
+                    imageUrl = it.imageUrl,
+                    isProductSet = it.isProductSet,
+                    isSpecialBrand = it.isSpecialBrand
+                )
+            }
+            _loading.value = false
+            updateProductsList(productsList = productsListFull)
+        }
     }
 
     fun filterByName(name: String) {
-        _productsList.value = productsListFull.filter { it.contains(name) }
+        updateProductsList(productsList = productsListFull.filter { it.name.contains(name) })
+    }
+
+    private fun updateProductsList(productsList: List<ProductUiModel>) {
+        _productsList.value = productsList
     }
 }
