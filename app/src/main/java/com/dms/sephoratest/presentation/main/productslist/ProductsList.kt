@@ -25,17 +25,18 @@ import com.dms.sephoratest.presentation.main.ProductsListMock
 fun ProductsList(
     modifier: Modifier = Modifier,
     productsList: List<ProductUiModel>,
-    onProductClick: () -> Unit
+    onProductClick: (Long) -> Unit
 ) {
     LazyColumn(
         modifier = modifier
     ) {
         items(count = productsList.size) { index ->
+            val product = productsList[index]
             ProductItem(
                 modifier = Modifier
                     .padding(vertical = 8.dp)
-                    .clickable { onProductClick() },
-                product = productsList[index]
+                    .clickable { onProductClick(product.id) },
+                product = product
             )
         }
     }

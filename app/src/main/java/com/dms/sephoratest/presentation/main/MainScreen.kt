@@ -20,14 +20,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.dms.sephoratest.R
 import com.dms.sephoratest.presentation.main.productslist.ProductsList
 
 @Composable
 fun MainScreen(
-    mainViewModel: MainViewModel = hiltViewModel(),
-    onProductClick: () -> Unit
+    mainViewModel: MainViewModel,
+    onProductClick: (Long) -> Unit
 ) {
     val viewState by mainViewModel.viewState.collectAsState()
 
@@ -42,7 +41,7 @@ fun MainScreen(
 private fun MainContent(
     productsList: List<ProductUiModel>,
     onQueryChanged: (String) -> Unit,
-    onProductClick: () -> Unit
+    onProductClick: (Long) -> Unit
 ) {
     Column(
         modifier = Modifier

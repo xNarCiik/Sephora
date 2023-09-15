@@ -42,6 +42,7 @@ class MainViewModel @Inject constructor(
             _loading.value = true
             productsListFull = productsApi.getProductsList().map { it.toDomain() }.map {
                 ProductUiModel(
+                    id = it.id,
                     name = it.name,
                     description = it.description,
                     price = it.price,
