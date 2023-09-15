@@ -1,8 +1,7 @@
 package com.dms.sephoratest.domain.model
 
 data class ProductReview(
-    val product_id: Long,
-    val hide: Boolean = false,
+    val id: Long,
     val reviews: List<Review>
 )
 

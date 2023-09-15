@@ -43,7 +43,7 @@ fun ProductsList(
 
 @Composable
 private fun ProductItem(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     product: ProductUiModel
 ) {
     Card(modifier = modifier) {
