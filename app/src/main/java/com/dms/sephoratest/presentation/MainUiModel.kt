@@ -1,10 +1,11 @@
-package com.dms.sephoratest.presentation.main
+package com.dms.sephoratest.presentation
 
 data class MainUiModel(
     val isLoading: Boolean = false,
     val isRefreshed: Boolean = false,
     val hasError: Boolean = false,
-    val productsList: List<ProductUiModel> = arrayListOf()
+    val productsList: List<ProductUiModel> = arrayListOf(),
+    val sortBestToWorst: Boolean = true
 )
 
 data class ProductUiModel(

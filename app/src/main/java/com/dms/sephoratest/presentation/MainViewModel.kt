@@ -1,4 +1,4 @@
-package com.dms.sephoratest.presentation.main
+package com.dms.sephoratest.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -21,6 +21,7 @@ class MainViewModel @Inject constructor(
     private val _isRefreshed = MutableStateFlow(value = false)
     private var _hasError = MutableStateFlow(value = false)
     private var _productsList = MutableStateFlow<List<ProductUiModel>>(value = arrayListOf())
+    private var _sortBestToWorst = MutableStateFlow(value = true)
 
     private var productsListFull = listOf<ProductUiModel>()
 
@@ -29,18 +30,21 @@ class MainViewModel @Inject constructor(
         _isLoading,
         _isRefreshed,
         _hasError,
-        _productsList
+        _productsList,
+        _sortBestToWorst,
     ) { params ->
         val isLoading = params[0] as Boolean
         val isRefreshed = params[1] as Boolean
         val hasError = params[2] as Boolean
         val productsList = params[3] as List<ProductUiModel>
+        val sortBestToWorst = params[4] as Boolean
 
         MainUiModel(
             isLoading = isLoading,
             isRefreshed = isRefreshed,
             hasError = hasError,
-            productsList = productsList
+            productsList = productsList,
+            sortBestToWorst = sortBestToWorst
         )
     }.stateIn(viewModelScope, SharingStarted.Lazily, MainUiModel())
 
@@ -56,10 +60,21 @@ class MainViewModel @Inject constructor(
         updateProductsList(productsList = productsListFull.filter { it.name.contains(name) })
     }
 
+    fun sortReviewsByBestToWorst(sortBestToWorst: Boolean) {
+        _sortBestToWorst.value = sortBestToWorst
+        productsListFull.map { productUiModel ->
+            productUiModel.reviews =
+                if (sortBestToWorst) productUiModel.reviews.sortedByDescending { it.rating }
+                else productUiModel.reviews.sortedBy { it.rating }
+        }
+        updateProductsList(productsList = productsListFull)
+    }
+
     private fun loadProductsList(isRefreshed: Boolean = false) {
         viewModelScope.launch {
-            _isRefreshed.value = isRefreshed
             _isLoading.value = true
+            _hasError.value = false
+            _isRefreshed.value = isRefreshed
             try {
                 val responseProductsList = productsApi.getProductsList()
                 if (responseProductsList.isSuccessful) {
@@ -96,14 +111,16 @@ class MainViewModel @Inject constructor(
                             _hasError.value = true
                         }
 
-                        updateProductsList(productsList = productsListFull)
+                        sortReviewsByBestToWorst(sortBestToWorst = _sortBestToWorst.value)
                     }
                 } else {
                     _hasError.value = true
+                    updateProductsList(productsList = arrayListOf())
                 }
                 loadingFinished()
             } catch (exception: Exception) {
                 _hasError.value = true
+                updateProductsList(productsList = arrayListOf())
                 loadingFinished()
             }
         }

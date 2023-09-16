@@ -1,5 +1,6 @@
 package com.dms.sephoratest.presentation.productdetail
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,9 +27,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.dms.sephoratest.R
-import com.dms.sephoratest.presentation.main.MainViewModel
-import com.dms.sephoratest.presentation.main.ProductUiModel
-import com.dms.sephoratest.presentation.main.ProductsListMock
+import com.dms.sephoratest.presentation.MainViewModel
+import com.dms.sephoratest.presentation.ProductUiModel
+import com.dms.sephoratest.presentation.ProductsListMock
 
 @Composable
 fun ProductDetailScreen(
@@ -42,6 +43,8 @@ fun ProductDetailScreen(
     if (product != null) {
         ProductDetailContent(
             product = product,
+            sortBestToWorst = viewState.sortBestToWorst,
+            onSortRatingPressed = mainViewModel::sortReviewsByBestToWorst,
             onButtonBackPressed = onButtonBackPressed,
         )
     } else {
@@ -52,6 +55,8 @@ fun ProductDetailScreen(
 @Composable
 private fun ProductDetailContent(
     product: ProductUiModel,
+    sortBestToWorst: Boolean,
+    onSortRatingPressed: (Boolean) -> Unit,
     onButtonBackPressed: () -> Unit
 ) {
     Column(modifier = Modifier.padding(all = 4.dp)) {
@@ -103,6 +108,7 @@ private fun ProductDetailContent(
             Card(
                 modifier = Modifier
                     .padding(top = 12.dp)
+                    .clickable { onSortRatingPressed(!sortBestToWorst) }
             ) {
                 Column(
                     modifier = Modifier
@@ -184,5 +190,10 @@ private fun ProductDetailContent(
 @Preview
 @Composable
 private fun ProductDetailContentPreview() {
-    ProductDetailContent(product = ProductsListMock.first(), onButtonBackPressed = { })
+    ProductDetailContent(
+        product = ProductsListMock.first(),
+        sortBestToWorst = true,
+        onSortRatingPressed = { },
+        onButtonBackPressed = { }
+    )
 }

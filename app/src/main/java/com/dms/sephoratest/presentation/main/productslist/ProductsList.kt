@@ -19,8 +19,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.dms.sephoratest.R
-import com.dms.sephoratest.presentation.main.ProductUiModel
-import com.dms.sephoratest.presentation.main.ProductsListMock
+import com.dms.sephoratest.presentation.ProductUiModel
+import com.dms.sephoratest.presentation.ProductsListMock
 
 @Composable
 fun ProductsList(

@@ -1,19 +1,24 @@
 package com.dms.sephoratest.presentation.main
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ErrorOutline
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -24,10 +29,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dms.sephoratest.R
+import com.dms.sephoratest.presentation.MainViewModel
+import com.dms.sephoratest.presentation.ProductUiModel
+import com.dms.sephoratest.presentation.ProductsListMock
 import com.dms.sephoratest.presentation.main.productslist.ProductsList
 
 @Composable
@@ -72,31 +81,45 @@ private fun MainContent(
                 onQueryChanged = onQueryChanged
             )
 
-            if (!hasError) {
-                if (productsList.isEmpty()) {
-                    // TODO UI FOR PRODUCTSLISTEMPTY
+            if(!isLoading) {
+                if (!hasError) {
+                    if (productsList.isEmpty()) {
+                        // TODO UI FOR PRODUCTSLISTEMPTY
+                        Column(
+                            modifier = Modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Text(text = "Aucun résultat")
+                        }
+                    } else {
+                        ProductsList(
+                            modifier = Modifier
+                                .padding(top = 8.dp),
+                            productsList = productsList,
+                            onProductClick = onProductClick
+                        )
+                    }
+                } else {
                     Column(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(text = "Aucun résultat")
+                        Icon(
+                            modifier = Modifier.size(size = 60.dp),
+                            imageVector = Icons.Filled.ErrorOutline,
+                            contentDescription = null,
+                            tint = Color.Gray
+                        )
+
+                        Text(
+                            modifier = Modifier.padding(top = 6.dp),
+                            text = "Une erreur s'est produite",
+                            color = Color.Gray,
+                            style = MaterialTheme.typography.titleLarge
+                        )
                     }
-                } else {
-                    ProductsList(
-                        modifier = Modifier
-                            .padding(top = 8.dp),
-                        productsList = productsList,
-                        onProductClick = onProductClick
-                    )
-                }
-            } else {
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(text = "Désolé, il semblerait qu'il y ai eu un problème lors de la récupération des données.")
                 }
             }
         }
@@ -106,6 +129,19 @@ private fun MainContent(
             refreshing = isRefreshed,
             state = pullRefreshState
         )
+    }
+
+    if (isLoading) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(color = Color.Transparent.copy(alpha = 0.25f))
+        ) {
+            CircularProgressIndicator(
+                modifier = Modifier.align(alignment = Alignment.Center),
+                color = Color.White
+            )
+        }
     }
 }
 
