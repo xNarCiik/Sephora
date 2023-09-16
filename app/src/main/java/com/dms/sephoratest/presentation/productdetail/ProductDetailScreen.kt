@@ -30,6 +30,7 @@ import com.dms.sephoratest.R
 import com.dms.sephoratest.presentation.MainViewModel
 import com.dms.sephoratest.presentation.ProductUiModel
 import com.dms.sephoratest.presentation.ProductsListMock
+import com.dms.sephoratest.presentation.ReviewUiModel
 
 @Composable
 fun ProductDetailScreen(
@@ -48,7 +49,7 @@ fun ProductDetailScreen(
             onButtonBackPressed = onButtonBackPressed,
         )
     } else {
-        Text("Error loading")
+        Text("Error loading") // Cant happen
     }
 }
 
@@ -60,119 +61,18 @@ private fun ProductDetailContent(
     onButtonBackPressed: () -> Unit
 ) {
     Column(modifier = Modifier.padding(all = 4.dp)) {
-        Card {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                AsyncImage(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentScale = ContentScale.FillWidth,
-                    model = product.imageUrl,
-                    placeholder = painterResource(id = R.drawable.ic_launcher_foreground), // TODO change placeholder
-                    error = painterResource(id = R.drawable.ic_launcher_foreground),
-                    contentDescription = "product image",
-                )
-
-                Text(
-                    modifier = Modifier
-                        .padding(top = 4.dp)
-                        .padding(horizontal = 8.dp),
-                    text = product.name,
-                    style = MaterialTheme.typography.titleLarge,
-                    textAlign = TextAlign.Center,
-                    fontWeight = FontWeight.Bold
-                )
-
-                Text(
-                    modifier = Modifier
-                        .padding(top = 6.dp)
-                        .padding(horizontal = 8.dp),
-                    text = product.description,
-                    style = MaterialTheme.typography.bodyMedium,
-                    textAlign = TextAlign.Center
-                )
-
-                Text(
-                    modifier = Modifier.padding(all = 8.dp),
-                    text = product.price.toString() + "€",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Red
-                )
-            }
-        }
+        ProductCard(product = product)
 
         Column(
             modifier = Modifier.weight(weight = 1f)
         ) {
-            Card(
+            ReviewsCard(
                 modifier = Modifier
-                    .padding(top = 12.dp)
-                    .clickable { onSortRatingPressed(!sortBestToWorst) }
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        modifier = Modifier.padding(top = 4.dp),
-                        text = "Reviews",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    Spacer(modifier = Modifier.padding(top = 6.dp))
-
-                    if (product.reviews.isEmpty()) {
-                        Text(
-                            text = "Pas de reviews sur ce produit pour le moment.",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    } else {
-                        LazyColumn {
-                            items(count = product.reviews.size) { index ->
-                                val review = product.reviews[index]
-                                Column(modifier = Modifier.padding(all = 4.dp)) {
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        val name = review.name ?: "Inconnu"
-                                        Text(
-                                            text = name,
-                                            style = MaterialTheme.typography.titleSmall,
-                                            fontWeight = FontWeight.Bold
-                                        )
-
-                                        Spacer(modifier = Modifier.weight(weight = 1f))
-
-                                        review.rating?.let {
-                                            RatingBar(rating = it)
-                                        }
-                                    }
-
-                                    review.text?.let {
-                                        Text(
-                                            modifier = Modifier.padding(top = 2.dp),
-                                            text = it,
-                                            style = MaterialTheme.typography.bodyMedium
-                                        )
-                                    }
-
-                                    if (index + 1 != product.reviews.size) {
-                                        Divider(
-                                            modifier = Modifier
-                                                .padding(top = 12.dp)
-                                                .fillMaxWidth()
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.padding(bottom = 4.dp))
-                }
-            }
+                    .padding(top = 12.dp),
+                product = product,
+                sortBestToWorst = sortBestToWorst,
+                onSortRatingPressed = onSortRatingPressed
+            )
         }
 
         Button(
@@ -183,6 +83,138 @@ private fun ProductDetailContent(
             colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
         ) {
             Text(text = "Retour")
+        }
+    }
+}
+
+@Composable
+private fun ProductCard(
+    modifier: Modifier = Modifier,
+    product: ProductUiModel
+) {
+    Card(modifier = modifier) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            AsyncImage(
+                modifier = Modifier.fillMaxWidth(),
+                contentScale = ContentScale.FillWidth,
+                model = product.imageUrl,
+                placeholder = painterResource(id = R.drawable.ic_launcher_foreground), // TODO change placeholder
+                error = painterResource(id = R.drawable.ic_launcher_foreground),
+                contentDescription = "product image",
+            )
+
+            Text(
+                modifier = Modifier
+                    .padding(top = 4.dp)
+                    .padding(horizontal = 8.dp),
+                text = product.name,
+                style = MaterialTheme.typography.titleLarge,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold
+            )
+
+            Text(
+                modifier = Modifier
+                    .padding(top = 6.dp)
+                    .padding(horizontal = 8.dp),
+                text = product.description,
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center
+            )
+
+            Text(
+                modifier = Modifier.padding(all = 8.dp),
+                text = product.price.toString() + "€",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+                color = Color.Red
+            )
+        }
+    }
+}
+
+@Composable
+private fun ReviewsCard(
+    modifier: Modifier = Modifier,
+    product: ProductUiModel,
+    sortBestToWorst: Boolean,
+    onSortRatingPressed: (Boolean) -> Unit
+) {
+    Card(
+        modifier = modifier
+            .clickable { onSortRatingPressed(!sortBestToWorst) }
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                modifier = Modifier.padding(top = 4.dp),
+                text = "Reviews",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.Bold
+            )
+
+            Spacer(modifier = Modifier.padding(top = 6.dp))
+
+            if (product.reviews.isEmpty()) {
+                Text(
+                    text = "Pas de reviews sur ce produit pour le moment.",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            } else {
+                ReviewsList(reviews = product.reviews)
+            }
+
+            Spacer(modifier = Modifier.padding(bottom = 4.dp))
+        }
+    }
+}
+
+@Composable
+private fun ReviewsList(
+    modifier: Modifier = Modifier,
+    reviews: List<ReviewUiModel>
+) {
+    LazyColumn(modifier = modifier) {
+        items(count = reviews.size) { index ->
+            val review = reviews[index]
+            Column(modifier = Modifier.padding(all = 4.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    val name = review.name ?: "Inconnu"
+                    Text(
+                        text = name,
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Spacer(modifier = Modifier.weight(weight = 1f))
+
+                    review.rating?.let {
+                        RatingBar(rating = it)
+                    }
+                }
+
+                review.text?.let {
+                    Text(
+                        modifier = Modifier.padding(top = 2.dp),
+                        text = it,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+
+                if (index + 1 != reviews.size) {
+                    Divider(
+                        modifier = Modifier
+                            .padding(top = 12.dp)
+                            .fillMaxWidth()
+                    )
+                }
+            }
         }
     }
 }
