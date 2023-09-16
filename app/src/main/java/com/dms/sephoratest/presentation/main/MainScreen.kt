@@ -42,7 +42,7 @@ fun MainScreen(
         isRefreshed = viewState.isRefreshed,
         hasError = viewState.hasError,
         productsList = viewState.productsList,
-        refreshList = mainViewModel::refreshList,
+        refreshList = mainViewModel::refreshProductsList,
         onQueryChanged = mainViewModel::filterByName,
         onProductClick = onProductClick
     )
@@ -80,7 +80,7 @@ private fun MainContent(
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(text = "C'est vide !")
+                        Text(text = "Aucun résultat")
                     }
                 } else {
                     ProductsList(

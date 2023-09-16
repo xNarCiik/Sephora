@@ -45,26 +45,26 @@ class MainViewModel @Inject constructor(
     }.stateIn(viewModelScope, SharingStarted.Lazily, MainUiModel())
 
     init {
-        loadList()
+        loadProductsList()
     }
 
-    fun refreshList() {
-        loadList(isRefreshed = true)
+    fun refreshProductsList() {
+        loadProductsList(isRefreshed = true)
     }
 
     fun filterByName(name: String) {
         updateProductsList(productsList = productsListFull.filter { it.name.contains(name) })
     }
 
-     private fun loadList(isRefreshed: Boolean = false) {
+    private fun loadProductsList(isRefreshed: Boolean = false) {
         viewModelScope.launch {
-            // Transform ProductsDto list to ProductUiModel list
             _isRefreshed.value = isRefreshed
             _isLoading.value = true
             try {
-                val response = productsApi.getProductsList()
-                if (response.isSuccessful) {
-                    response.body()?.let { productsList ->
+                val responseProductsList = productsApi.getProductsList()
+                if (responseProductsList.isSuccessful) {
+                    responseProductsList.body()?.let { productsList ->
+                        // Transform ProductsDto list to ProductUiModel list
                         productsListFull = productsList.map { it.toDomain() }.map {
                             ProductUiModel(
                                 id = it.id,
@@ -76,9 +76,28 @@ class MainViewModel @Inject constructor(
                                 isSpecialBrand = it.isSpecialBrand
                             )
                         }
+
+                        val responseProductReviews = productsApi.getProductReviews()
+                        if (responseProductReviews.isSuccessful) {
+                            _hasError.value = false
+                            responseProductReviews.body()?.let { productReviews ->
+                                productReviews.map { it.toDomain() }.forEach { productReview ->
+                                    productsListFull.find { it.id == productReview.id }?.reviews =
+                                        productReview.reviews.map {
+                                            ReviewUiModel(
+                                                name = it.name,
+                                                text = it.text,
+                                                rating = it.rating
+                                            )
+                                        }
+                                }
+                            }
+                        } else {
+                            _hasError.value = true
+                        }
+
                         updateProductsList(productsList = productsListFull)
                     }
-                    _hasError.value = false
                 } else {
                     _hasError.value = true
                 }

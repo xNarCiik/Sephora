@@ -1,7 +1,7 @@
 package com.dms.sephoratest.data.api
 
 import com.dms.sephoratest.data.model.ProductDto
-import com.dms.sephoratest.data.model.ProductReviewDto
+import com.dms.sephoratest.data.model.ProductReviewsDto
 import retrofit2.Response
 import retrofit2.http.GET
 
@@ -11,5 +11,5 @@ interface ProductsApi {
     suspend fun getProductsList(): Response<List<ProductDto>>
 
     @GET("reviews.json")
-    suspend fun getProductReview(): List<ProductReviewDto>
+    suspend fun getProductReviews(): Response<List<ProductReviewsDto>>
 }

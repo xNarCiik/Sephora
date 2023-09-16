@@ -1,6 +1,6 @@
 package com.dms.sephoratest.data.model
 
-data class ProductReviewDto(
+data class ProductReviewsDto(
     val product_id: Long,
     val hide: Boolean = false,
     val reviews: List<ReviewDto>
@@ -8,6 +8,6 @@ data class ProductReviewDto(
 
 data class ReviewDto(
     val name: String? = null,
-    val text: String,
+    val text: String? = null,
     val rating: Double?
 )

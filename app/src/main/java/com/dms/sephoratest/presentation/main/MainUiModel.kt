@@ -14,7 +14,14 @@ data class ProductUiModel(
     val price: Double,
     val imageUrl: String,
     val isProductSet: Boolean,
-    val isSpecialBrand: Boolean
+    val isSpecialBrand: Boolean,
+    var reviews: List<ReviewUiModel> = arrayListOf()
+)
+
+data class ReviewUiModel(
+    val name: String?,
+    val text: String?,
+    val rating: Double?
 )
 
 val ProductsListMock = arrayListOf(
@@ -24,7 +31,8 @@ val ProductsListMock = arrayListOf(
         price = 140.00,
         imageUrl = "https://dev.sephora.fr/on/demandware.static/-/Library-Sites-SephoraV2/default/dw521a3f33/brands/institbanner/SEPHO_900_280_institutional_banner_20210927_V2.jpg",
         isProductSet = true,
-        isSpecialBrand = true
+        isSpecialBrand = true,
+        reviews = arrayListOf()
     ),
     ProductUiModel(
         name = "Size Up - Mascara Volume Extra Large Immédiat",
@@ -32,7 +40,8 @@ val ProductsListMock = arrayListOf(
         price = 140.00,
         imageUrl = "https://dev.sephora.fr/on/demandware.static/-/Library-Sites-SephoraV2/default/dw521a3f33/brands/institbanner/SEPHO_900_280_institutional_banner_20210927_V2.jpg",
         isProductSet = true,
-        isSpecialBrand = true
+        isSpecialBrand = true,
+        reviews = arrayListOf()
     ),
     ProductUiModel(
         name = "Size Up - Mascara Volume Extra Large Immédiat",
@@ -40,7 +49,8 @@ val ProductsListMock = arrayListOf(
         price = 140.00,
         imageUrl = "https://dev.sephora.fr/on/demandware.static/-/Library-Sites-SephoraV2/default/dw521a3f33/brands/institbanner/SEPHO_900_280_institutional_banner_20210927_V2.jpg",
         isProductSet = true,
-        isSpecialBrand = true
+        isSpecialBrand = true,
+        reviews = arrayListOf()
     ),
     ProductUiModel(
         name = "Size Up - Mascara Volume Extra Large Immédiat",
@@ -48,6 +58,7 @@ val ProductsListMock = arrayListOf(
         price = 140.00,
         imageUrl = "https://dev.sephora.fr/on/demandware.static/-/Library-Sites-SephoraV2/default/dw521a3f33/brands/institbanner/SEPHO_900_280_institutional_banner_20210927_V2.jpg",
         isProductSet = true,
-        isSpecialBrand = true
+        isSpecialBrand = true,
+        reviews = arrayListOf()
     )
 )

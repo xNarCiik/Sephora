@@ -49,7 +49,10 @@ class MainActivity : ComponentActivity() {
                             titleContentColor = Color.White,
                         ),
                         title = {
-                            Text(stringResource(id = R.string.app_name))
+                            Text(
+                                text = stringResource(id = R.string.app_name),
+                                style = MaterialTheme.typography.titleLarge
+                            )
                         }
                     )
                 },
@@ -84,7 +87,8 @@ class MainActivity : ComponentActivity() {
                                 it.arguments?.getLong(productIdExtra) ?: 0 // Cannot be null
                             ProductDetailScreen(
                                 mainViewModel = mainViewModel,
-                                productId = productId
+                                productId = productId,
+                                onButtonBackPressed = { navController.popBackStack() }
                             )
                         }
                     }
