@@ -17,47 +17,82 @@ class MainViewModel @Inject constructor(
     private val productsApi: ProductsApi,
 ) : ViewModel() {
 
-    private var _loading = MutableStateFlow(value = false)
+    private var _isLoading = MutableStateFlow(value = false)
+    private val _isRefreshed = MutableStateFlow(value = false)
+    private var _hasError = MutableStateFlow(value = false)
     private var _productsList = MutableStateFlow<List<ProductUiModel>>(value = arrayListOf())
 
     private var productsListFull = listOf<ProductUiModel>()
 
     @Suppress("UNCHECKED_CAST")
     val viewState = combine(
-        _loading,
+        _isLoading,
+        _isRefreshed,
+        _hasError,
         _productsList
     ) { params ->
-        val loading = params[0] as Boolean
-        val productsList = params[1] as List<ProductUiModel>
+        val isLoading = params[0] as Boolean
+        val isRefreshed = params[1] as Boolean
+        val hasError = params[2] as Boolean
+        val productsList = params[3] as List<ProductUiModel>
 
         MainUiModel(
-            loading = loading,
+            isLoading = isLoading,
+            isRefreshed = isRefreshed,
+            hasError = hasError,
             productsList = productsList
         )
     }.stateIn(viewModelScope, SharingStarted.Lazily, MainUiModel())
 
     init {
-        viewModelScope.launch {
-            // Transform ProductsDto list to ProductUiModel list
-            _loading.value = true
-            productsListFull = productsApi.getProductsList().map { it.toDomain() }.map {
-                ProductUiModel(
-                    id = it.id,
-                    name = it.name,
-                    description = it.description,
-                    price = it.price,
-                    imageUrl = it.imageUrl,
-                    isProductSet = it.isProductSet,
-                    isSpecialBrand = it.isSpecialBrand
-                )
-            }
-            _loading.value = false
-            updateProductsList(productsList = productsListFull)
-        }
+        loadList()
+    }
+
+    fun refreshList() {
+        loadList(isRefreshed = true)
     }
 
     fun filterByName(name: String) {
         updateProductsList(productsList = productsListFull.filter { it.name.contains(name) })
+    }
+
+     private fun loadList(isRefreshed: Boolean = false) {
+        viewModelScope.launch {
+            // Transform ProductsDto list to ProductUiModel list
+            _isRefreshed.value = isRefreshed
+            _isLoading.value = true
+            try {
+                val response = productsApi.getProductsList()
+                if (response.isSuccessful) {
+                    response.body()?.let { productsList ->
+                        productsListFull = productsList.map { it.toDomain() }.map {
+                            ProductUiModel(
+                                id = it.id,
+                                name = it.name,
+                                description = it.description,
+                                price = it.price,
+                                imageUrl = it.imageUrl,
+                                isProductSet = it.isProductSet,
+                                isSpecialBrand = it.isSpecialBrand
+                            )
+                        }
+                        updateProductsList(productsList = productsListFull)
+                    }
+                    _hasError.value = false
+                } else {
+                    _hasError.value = true
+                }
+                loadingFinished()
+            } catch (exception: Exception) {
+                _hasError.value = true
+                loadingFinished()
+            }
+        }
+    }
+
+    private fun loadingFinished() {
+        _isRefreshed.value = false
+        _isLoading.value = false
     }
 
     private fun updateProductsList(productsList: List<ProductUiModel>) {

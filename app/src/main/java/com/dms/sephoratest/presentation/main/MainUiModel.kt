@@ -1,7 +1,9 @@
 package com.dms.sephoratest.presentation.main
 
 data class MainUiModel(
-    val loading: Boolean = false,
+    val isLoading: Boolean = false,
+    val isRefreshed: Boolean = false,
+    val hasError: Boolean = false,
     val productsList: List<ProductUiModel> = arrayListOf()
 )
 

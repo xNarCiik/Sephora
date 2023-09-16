@@ -7,12 +7,12 @@ plugins {
 
 android {
     namespace 'com.dms.sephoratest'
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.dms.sephoratest"
         minSdk 24
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -58,6 +58,7 @@ dependencies {
     implementation 'androidx.compose.ui:ui-graphics'
     implementation 'androidx.compose.ui:ui-tooling-preview'
     implementation 'androidx.compose.material3:material3'
+    implementation "androidx.compose.material:material:1.6.0-alpha05"
     implementation("androidx.navigation:navigation-compose:2.5.3")
 
     //Dagger - Hilt (Injection dependencies)
