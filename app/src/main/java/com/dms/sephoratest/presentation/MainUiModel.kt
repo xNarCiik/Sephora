@@ -7,7 +7,8 @@ data class MainUiModel(
     val isRefreshed: Boolean = false,
     val hasError: Boolean = false,
     val productsList: List<ProductUiModel> = arrayListOf(),
-    val sortBestToWorst: Boolean = true
+    val sortBestToWorst: Boolean = true,
+    val cartList: List<ProductUiModel> = arrayListOf()
 )
 
 data class ProductUiModel(

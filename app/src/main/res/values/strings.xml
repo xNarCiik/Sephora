@@ -3,7 +3,7 @@
     <string name="search">Cherchez un produit</string>
     <string name="snackback_error_get_products">Une erreur c\'est produite lors de la récupération des produits.</string>
     <string name="retry">Réessayer</string>
-    <string name="buy">Ajouter au panier</string>
+    <string name="add_to_cart">Ajouter au panier</string>
     <string name="euro_device">€</string>
     <string name="reviews">%s avis clients</string>
     <string name="empty_reviews">Pas de reviews sur ce produit pour le moment.</string>

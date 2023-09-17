@@ -23,6 +23,7 @@ class MainViewModel @Inject constructor(
     private var _hasError = MutableStateFlow(value = false)
     private var _productsList = MutableStateFlow<List<ProductUiModel>>(value = arrayListOf())
     private var _sortBestToWorst = MutableStateFlow(value = true)
+    private var _cartList = MutableStateFlow<ArrayList<ProductUiModel>>(value = arrayListOf())
 
     private var productsListFull = listOf<ProductUiModel>()
 
@@ -35,6 +36,7 @@ class MainViewModel @Inject constructor(
         _hasError,
         _productsList,
         _sortBestToWorst,
+        _cartList
     ) { params ->
         val showTopBar = params[0] as Boolean
         val showBackButton = params[1] as Boolean
@@ -43,6 +45,7 @@ class MainViewModel @Inject constructor(
         val hasError = params[4] as Boolean
         val productsList = params[5] as List<ProductUiModel>
         val sortBestToWorst = params[6] as Boolean
+        val cartList = params[7] as List<ProductUiModel>
 
         MainUiModel(
             showTopBar = showTopBar,
@@ -51,7 +54,8 @@ class MainViewModel @Inject constructor(
             isRefreshed = isRefreshed,
             hasError = hasError,
             productsList = productsList,
-            sortBestToWorst = sortBestToWorst
+            sortBestToWorst = sortBestToWorst,
+            cartList = cartList
         )
     }.stateIn(viewModelScope, SharingStarted.Lazily, MainUiModel())
 
@@ -83,6 +87,16 @@ class MainViewModel @Inject constructor(
                 else productUiModel.reviews.sortedBy { it.rating }
         }
         updateProductsList(productsList = productsListFull)
+    }
+
+    fun addToCart(productId: Long) {
+        productsListFull.find { it.id == productId }?.let {
+            _cartList.value =
+                arrayListOf<ProductUiModel>().apply {
+                    addAll(_cartList.value)
+                    add(it)
+                }
+        }
     }
 
     private fun loadProductsList(isRefreshed: Boolean = false) {

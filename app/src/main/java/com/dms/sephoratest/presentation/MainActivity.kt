@@ -10,6 +10,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,6 +27,7 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -85,34 +89,12 @@ class MainActivity : ComponentActivity() {
                 snackbarHost = { SnackbarHost(snackbarHostState) },
                 topBar = {
                     if (viewState.showTopBar) {
-                        Column {
-                            CenterAlignedTopAppBar(
-                                colors = TopAppBarDefaults.largeTopAppBarColors(
-                                    containerColor = Color.White,
-                                    titleContentColor = Color.Black,
-                                ),
-                                title = {
-                                    Text(
-                                        text = stringResource(id = R.string.app_name),
-                                        style = MaterialTheme.typography.titleLarge
-                                    )
-                                },
-                                navigationIcon = {
-                                    if (viewState.showBackButton) {
-                                        IconButton(onClick = { navController.popBackStack() }) {
-                                            Icon(
-                                                modifier = Modifier
-                                                    .size(size = 28.dp),
-                                                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                                                contentDescription = ""
-                                            )
-                                        }
-                                    }
-                                }
-                            )
-
-                            Divider()
-                        }
+                        TopAppBarSephora(
+                            showBackButton = viewState.showBackButton,
+                            onBackPressed = { navController.popBackStack() },
+                            cartSize = viewState.cartList.size,
+                            onCartPressed = { }
+                        )
                     }
                 },
             ) { innerPadding ->
@@ -158,6 +140,61 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
+        }
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    private fun TopAppBarSephora(
+        showBackButton: Boolean,
+        onBackPressed: () -> Unit,
+        cartSize: Int,
+        onCartPressed: () -> Unit,
+    ) {
+        Column {
+            CenterAlignedTopAppBar(
+                colors = TopAppBarDefaults.largeTopAppBarColors(
+                    containerColor = Color.White,
+                    titleContentColor = Color.Black,
+                ),
+                title = {
+                    Text(
+                        text = stringResource(id = R.string.app_name),
+                        style = MaterialTheme.typography.titleLarge
+                    )
+                },
+                navigationIcon = {
+                    if (showBackButton) {
+                        IconButton(onClick = onBackPressed) {
+                            Icon(
+                                modifier = Modifier
+                                    .size(size = 28.dp),
+                                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                                contentDescription = "back button"
+                            )
+                        }
+                    }
+                },
+                actions = {
+                    IconButton(
+                        modifier = Modifier.padding(end = 8.dp),
+                        onClick = onCartPressed
+                    ) {
+                        BadgedBox(
+                            badge = { Badge { Text(text = cartSize.toString()) } }
+                        ) {
+                            Icon(
+                                modifier = Modifier
+                                    .size(size = 28.dp),
+                                imageVector = Icons.Filled.ShoppingCart,
+                                contentDescription = "card button"
+                            )
+                        }
+                    }
+                }
+            )
+
+            Divider()
         }
     }
 }

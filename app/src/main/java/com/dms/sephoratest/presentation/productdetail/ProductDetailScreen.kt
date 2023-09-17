@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -40,9 +41,11 @@ fun ProductDetailScreen(
 
     if (product != null) {
         ProductDetailContent(
+            productId = productId,
             product = product,
             sortBestToWorst = viewState.sortBestToWorst,
-            onSortRatingPressed = mainViewModel::sortReviewsByBestToWorst
+            onSortRatingPressed = mainViewModel::sortReviewsByBestToWorst,
+            onAddToCart = mainViewModel::addToCart
         )
     } else {
         Text(text = "Error loading") // Cant happen
@@ -51,9 +54,11 @@ fun ProductDetailScreen(
 
 @Composable
 private fun ProductDetailContent(
+    productId: Long,
     product: ProductUiModel,
     sortBestToWorst: Boolean,
-    onSortRatingPressed: (Boolean) -> Unit
+    onSortRatingPressed: (Boolean) -> Unit,
+    onAddToCart: (Long) -> Unit
 ) {
     Column(modifier = Modifier.padding(bottom = 8.dp)) {
         ProductInfo(
@@ -81,15 +86,17 @@ private fun ProductDetailContent(
             modifier = Modifier
                 .padding(top = 4.dp)
                 .padding(horizontal = 8.dp),
-            price = product.price
+            price = product.price,
+            onAddToCart = { onAddToCart(productId) }
         )
     }
 }
 
 @Composable
 fun AddToCartBottom(
-    modifier: Modifier,
-    price: Double
+    modifier: Modifier = Modifier,
+    price: Double,
+    onAddToCart: () -> Unit
 ) {
     Row(
         modifier = modifier,
@@ -106,10 +113,11 @@ fun AddToCartBottom(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 8.dp),
-            onClick = { /* NOT IMPLEMENTED */ },
+            shape = RectangleShape,
+            onClick = onAddToCart,
             colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
         ) {
-            Text(text = stringResource(R.string.buy))
+            Text(text = stringResource(R.string.add_to_cart))
         }
     }
 }
@@ -118,8 +126,10 @@ fun AddToCartBottom(
 @Composable
 private fun ProductDetailContentPreview() {
     ProductDetailContent(
+        productId = 0L,
         product = ProductsListMock.first(),
         sortBestToWorst = true,
-        onSortRatingPressed = { }
+        onSortRatingPressed = { },
+        onAddToCart = { }
     )
 }
