@@ -1,4 +1,13 @@
 <resources>
     <string name="app_name">Sephora</string>
     <string name="search">Search</string>
+    <string name="snackback_error_get_products">Une erreur c\'est produite lors de la récupération des produits.</string>
+    <string name="retry">Réessayer</string>
+    <string name="back">Retour</string>
+    <string name="euro_device">€</string>
+    <string name="reviews">Reviews</string>
+    <string name="empty_reviews">Pas de reviews sur ce produit pour le moment.</string>
+    <string name="review_empty_name">Non renseigné</string>
+    <string name="no_result">Aucun résultat</string>
+    <string name="an_error_happen">Une erreur s\'est produite</string>
 </resources>

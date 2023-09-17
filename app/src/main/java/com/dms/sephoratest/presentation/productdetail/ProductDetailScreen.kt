@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -82,7 +83,7 @@ private fun ProductDetailContent(
             onClick = onButtonBackPressed,
             colors = ButtonDefaults.buttonColors(containerColor = Color.Black)
         ) {
-            Text(text = "Retour")
+            Text(text = stringResource(R.string.back))
         }
     }
 }
@@ -126,7 +127,7 @@ private fun ProductCard(
 
             Text(
                 modifier = Modifier.padding(all = 8.dp),
-                text = product.price.toString() + "€",
+                text = product.price.toString() + stringResource(R.string.euro_device),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = Color.Red
@@ -154,7 +155,7 @@ private fun ReviewsCard(
         ) {
             Text(
                 modifier = Modifier.padding(top = 4.dp),
-                text = "Reviews",
+                text = stringResource(R.string.reviews),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
@@ -163,7 +164,7 @@ private fun ReviewsCard(
 
             if (product.reviews.isEmpty()) {
                 Text(
-                    text = "Pas de reviews sur ce produit pour le moment.",
+                    text = stringResource(R.string.empty_reviews),
                     style = MaterialTheme.typography.bodyMedium
                 )
             } else {
@@ -185,7 +186,7 @@ private fun ReviewsList(
             val review = reviews[index]
             Column(modifier = Modifier.padding(all = 4.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    val name = review.name ?: "Inconnu"
+                    val name = review.name ?: stringResource(R.string.review_empty_name)
                     Text(
                         text = name,
                         style = MaterialTheme.typography.titleSmall,

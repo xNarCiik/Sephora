@@ -25,8 +25,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.dms.sephoratest.R
 import com.dms.sephoratest.presentation.MainViewModel
 import com.dms.sephoratest.presentation.ProductUiModel
 import com.dms.sephoratest.presentation.ProductsListMock
@@ -124,7 +126,7 @@ private fun EmptyList(
 
         Text(
             modifier = Modifier.padding(top = 6.dp),
-            text = "Aucun résultat",
+            text = stringResource(R.string.no_result),
             color = Color.Gray,
             style = MaterialTheme.typography.titleLarge
         )
@@ -149,7 +151,7 @@ private fun ErrorComponent(
 
         Text(
             modifier = Modifier.padding(top = 6.dp),
-            text = "Une erreur s'est produite",
+            text = stringResource(R.string.an_error_happen),
             color = Color.Gray,
             style = MaterialTheme.typography.titleLarge
         )

@@ -56,15 +56,15 @@ class MainActivity : ComponentActivity() {
             val viewState by mainViewModel.viewState.collectAsState()
 
             LaunchedEffect(key1 = viewState.hasError, block = {
-                if(viewState.hasError) {
+                if (viewState.hasError) {
                     scope.launch {
                         val result = snackbarHostState.showSnackbar(
-                            message = "Une erreur c'est produite lors de la récupération des produits.",
-                            actionLabel = "Réessayer",
+                            message = getString(R.string.snackback_error_get_products),
+                            actionLabel = getString(R.string.retry),
                             duration = SnackbarDuration.Long
                         )
 
-                        if(result == SnackbarResult.ActionPerformed) {
+                        if (result == SnackbarResult.ActionPerformed) {
                             mainViewModel.refreshProductsList()
                         }
                     }
