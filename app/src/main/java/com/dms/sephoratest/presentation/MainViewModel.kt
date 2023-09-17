@@ -2,8 +2,7 @@ package com.dms.sephoratest.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dms.sephoratest.data.api.ProductsApi
-import com.dms.sephoratest.data.model.mapper.toDomain
+import com.dms.sephoratest.domain.repository.ProductsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -14,7 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val productsApi: ProductsApi,
+    private val productsRepository: ProductsRepository
 ) : ViewModel() {
 
     private var _showTopBar = MutableStateFlow(value = false)
@@ -83,48 +82,33 @@ class MainViewModel @Inject constructor(
             _isLoading.value = true
             _hasError.value = false
             _isRefreshed.value = isRefreshed
+
             try {
-                val responseProductsList = productsApi.getProductsList()
-                if (responseProductsList.isSuccessful) {
-                    responseProductsList.body()?.let { productsList ->
-                        // Transform ProductsDto list to ProductUiModel list
-                        productsListFull = productsList.map { it.toDomain() }.map {
-                            ProductUiModel(
-                                id = it.id,
+                // Transform Products list to ProductUiModel list
+                productsListFull = productsRepository.getProductsList().map {
+                    ProductUiModel(
+                        id = it.id,
+                        name = it.name,
+                        description = it.description,
+                        price = it.price,
+                        imageUrl = it.imageUrl,
+                        isProductSet = it.isProductSet,
+                        isSpecialBrand = it.isSpecialBrand
+                    )
+                }
+
+                productsRepository.getProductReviews().forEach { productReview ->
+                    productsListFull.find { it.id == productReview.id }?.reviews =
+                        productReview.reviews.map {
+                            ReviewUiModel(
                                 name = it.name,
-                                description = it.description,
-                                price = it.price,
-                                imageUrl = it.imageUrl,
-                                isProductSet = it.isProductSet,
-                                isSpecialBrand = it.isSpecialBrand
+                                text = it.text,
+                                rating = it.rating
                             )
                         }
-
-                        val responseProductReviews = productsApi.getProductReviews()
-                        if (responseProductReviews.isSuccessful) {
-                            _hasError.value = false
-                            responseProductReviews.body()?.let { productReviews ->
-                                productReviews.map { it.toDomain() }.forEach { productReview ->
-                                    productsListFull.find { it.id == productReview.id }?.reviews =
-                                        productReview.reviews.map {
-                                            ReviewUiModel(
-                                                name = it.name,
-                                                text = it.text,
-                                                rating = it.rating
-                                            )
-                                        }
-                                }
-                            }
-                        } else {
-                            _hasError.value = true
-                        }
-
-                        sortReviewsByBestToWorst(sortBestToWorst = _sortBestToWorst.value)
-                    }
-                } else {
-                    _hasError.value = true
-                    updateProductsList(productsList = arrayListOf())
                 }
+
+                sortReviewsByBestToWorst(sortBestToWorst = _sortBestToWorst.value)
                 loadingFinished()
             } catch (exception: Exception) {
                 _hasError.value = true

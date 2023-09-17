@@ -2,6 +2,8 @@ package com.dms.sephoratest.di
 
 import com.dms.sephoratest.data.api.ProductsApi
 import com.dms.sephoratest.data.api.RetrofitInstance
+import com.dms.sephoratest.data.repository.ProductsRepositoryImpl
+import com.dms.sephoratest.domain.repository.ProductsRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,4 +20,9 @@ object AppModule {
         return RetrofitInstance.productsApi
     }
 
+    @Provides
+    @Singleton
+    fun provideProductsRepository(): ProductsRepository {
+        return ProductsRepositoryImpl(productsApi = provideProductsApi())
+    }
 }
