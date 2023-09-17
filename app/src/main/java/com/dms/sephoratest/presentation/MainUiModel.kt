@@ -36,7 +36,13 @@ val ProductsListMock = arrayListOf(
         imageUrl = "https://dev.sephora.fr/on/demandware.static/-/Library-Sites-SephoraV2/default/dw521a3f33/brands/institbanner/SEPHO_900_280_institutional_banner_20210927_V2.jpg",
         isProductSet = true,
         isSpecialBrand = true,
-        reviews = arrayListOf()
+        reviews = arrayListOf(
+            ReviewUiModel(
+                "Jonh Doe",
+                text = "Ce produit est super !",
+                rating = 4.5
+            )
+        )
     ),
     ProductUiModel(
         name = "Size Up - Mascara Volume Extra Large Immédiat",

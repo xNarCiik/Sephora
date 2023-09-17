@@ -1,6 +1,5 @@
 package com.dms.sephoratest.presentation.main
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -8,6 +7,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,14 +30,15 @@ fun SearchBar(
     var text by remember { mutableStateOf(value = "") }
     val trailingIcon: @Composable (() -> Unit) = {
         if (text.isNotEmpty()) {
-            Icon(
-                modifier = Modifier.clickable {
-                    text = ""
-                    onQueryChanged(text)
-                },
-                imageVector = Icons.Filled.Close,
-                contentDescription = null
-            )
+            IconButton(onClick = {
+                text = ""
+                onQueryChanged(text)
+            }) {
+                Icon(
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = null
+                )
+            }
         }
     }
 
