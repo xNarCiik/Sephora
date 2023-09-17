@@ -1,5 +1,6 @@
 package com.dms.sephoratest.presentation.main
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -10,7 +11,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ErrorOutline
-import androidx.compose.material.icons.filled.HourglassEmpty
 import androidx.compose.material.icons.filled.SearchOff
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
@@ -39,6 +39,10 @@ fun MainScreen(
     onProductClick: (Long) -> Unit
 ) {
     val viewState by mainViewModel.viewState.collectAsState()
+
+    BackHandler(true) {
+        // Disable navigate back
+    }
 
     MainContent(
         isLoading = viewState.isLoading,
@@ -164,7 +168,7 @@ private fun Loader(
 ) {
     Box(
         modifier = modifier
-            .background(color = Color.Transparent.copy(alpha = 0.25f))
+            .background(color = Color.Transparent.copy(alpha = 0.1f))
     ) {
         CircularProgressIndicator(
             modifier = Modifier.align(alignment = Alignment.Center),

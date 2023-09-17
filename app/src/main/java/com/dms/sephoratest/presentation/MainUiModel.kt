@@ -1,6 +1,7 @@
 package com.dms.sephoratest.presentation
 
 data class MainUiModel(
+    val showTopBar: Boolean = false,
     val isLoading: Boolean = false,
     val isRefreshed: Boolean = false,
     val hasError: Boolean = false,

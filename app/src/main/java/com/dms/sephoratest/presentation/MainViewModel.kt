@@ -17,6 +17,7 @@ class MainViewModel @Inject constructor(
     private val productsApi: ProductsApi,
 ) : ViewModel() {
 
+    private var _showTopBar = MutableStateFlow(value = false)
     private var _isLoading = MutableStateFlow(value = false)
     private val _isRefreshed = MutableStateFlow(value = false)
     private var _hasError = MutableStateFlow(value = false)
@@ -27,19 +28,22 @@ class MainViewModel @Inject constructor(
 
     @Suppress("UNCHECKED_CAST")
     val viewState = combine(
+        _showTopBar,
         _isLoading,
         _isRefreshed,
         _hasError,
         _productsList,
         _sortBestToWorst,
     ) { params ->
-        val isLoading = params[0] as Boolean
-        val isRefreshed = params[1] as Boolean
-        val hasError = params[2] as Boolean
-        val productsList = params[3] as List<ProductUiModel>
-        val sortBestToWorst = params[4] as Boolean
+        val showTopBar = params[0] as Boolean
+        val isLoading = params[1] as Boolean
+        val isRefreshed = params[2] as Boolean
+        val hasError = params[3] as Boolean
+        val productsList = params[4] as List<ProductUiModel>
+        val sortBestToWorst = params[5] as Boolean
 
         MainUiModel(
+            showTopBar = showTopBar,
             isLoading = isLoading,
             isRefreshed = isRefreshed,
             hasError = hasError,
@@ -50,6 +54,10 @@ class MainViewModel @Inject constructor(
 
     init {
         loadProductsList()
+    }
+
+    fun showTopBar() {
+        _showTopBar.value = true
     }
 
     fun refreshProductsList() {

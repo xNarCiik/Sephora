@@ -4,8 +4,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -15,7 +18,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -33,6 +35,7 @@ import androidx.navigation.navArgument
 import com.dms.sephoratest.R
 import com.dms.sephoratest.presentation.main.MainScreen
 import com.dms.sephoratest.presentation.productdetail.ProductDetailScreen
+import com.dms.sephoratest.presentation.splashscreen.SplashScreen
 import com.dms.sephoratest.presentation.util.Screen
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -41,7 +44,7 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
 
     companion object {
-        private const val productIdExtra = "PRODUCT_ID_EXTRA"
+        private const val PRODUCT_ID_EXTRA = "PRODUCT_ID_EXTRA"
     }
 
     private val mainViewModel: MainViewModel by viewModels()
@@ -74,18 +77,24 @@ class MainActivity : ComponentActivity() {
             Scaffold(
                 snackbarHost = { SnackbarHost(snackbarHostState) },
                 topBar = {
-                    TopAppBar(
-                        colors = TopAppBarDefaults.smallTopAppBarColors(
-                            containerColor = Color.Black,
-                            titleContentColor = Color.White,
-                        ),
-                        title = {
-                            Text(
-                                text = stringResource(id = R.string.app_name),
-                                style = MaterialTheme.typography.titleLarge
+                    if (viewState.showTopBar) {
+                        Column {
+                            CenterAlignedTopAppBar(
+                                colors = TopAppBarDefaults.largeTopAppBarColors(
+                                    containerColor = Color.White,
+                                    titleContentColor = Color.Black,
+                                ),
+                                title = {
+                                    Text(
+                                        text = stringResource(id = R.string.app_name),
+                                        style = MaterialTheme.typography.titleLarge
+                                    )
+                                }
                             )
+
+                            Divider()
                         }
-                    )
+                    }
                 },
             ) { innerPadding ->
                 Surface(
@@ -98,8 +107,16 @@ class MainActivity : ComponentActivity() {
 
                     NavHost(
                         navController = navController,
-                        startDestination = Screen.MainScreen.route
+                        startDestination = Screen.SplashScreen.route
                     ) {
+                        composable(route = Screen.SplashScreen.route) {
+                            SplashScreen(
+                                navigateToMainScreen = {
+                                    navController.navigate(route = Screen.MainScreen.route)
+                                    mainViewModel.showTopBar()
+                                }
+                            )
+                        }
                         composable(route = Screen.MainScreen.route) {
                             MainScreen(
                                 mainViewModel = mainViewModel,
@@ -107,15 +124,15 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable(
-                            route = Screen.ProductDetailScreen.route + "/{$productIdExtra}",
+                            route = Screen.ProductDetailScreen.route + "/{$PRODUCT_ID_EXTRA}",
                             arguments = listOf(
-                                navArgument(productIdExtra) {
+                                navArgument(PRODUCT_ID_EXTRA) {
                                     type = NavType.LongType
                                 }
                             )
                         ) {
                             val productId =
-                                it.arguments?.getLong(productIdExtra) ?: 0 // Cannot be null
+                                it.arguments?.getLong(PRODUCT_ID_EXTRA) ?: 0 // Cannot be null
                             ProductDetailScreen(
                                 mainViewModel = mainViewModel,
                                 productId = productId,
