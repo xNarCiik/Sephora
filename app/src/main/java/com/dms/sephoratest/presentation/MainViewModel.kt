@@ -17,6 +17,7 @@ class MainViewModel @Inject constructor(
 ) : ViewModel() {
 
     private var _showTopBar = MutableStateFlow(value = false)
+    private var _showBackButton = MutableStateFlow(value = false)
     private var _isLoading = MutableStateFlow(value = false)
     private val _isRefreshed = MutableStateFlow(value = false)
     private var _hasError = MutableStateFlow(value = false)
@@ -28,6 +29,7 @@ class MainViewModel @Inject constructor(
     @Suppress("UNCHECKED_CAST")
     val viewState = combine(
         _showTopBar,
+        _showBackButton,
         _isLoading,
         _isRefreshed,
         _hasError,
@@ -35,14 +37,16 @@ class MainViewModel @Inject constructor(
         _sortBestToWorst,
     ) { params ->
         val showTopBar = params[0] as Boolean
-        val isLoading = params[1] as Boolean
-        val isRefreshed = params[2] as Boolean
-        val hasError = params[3] as Boolean
-        val productsList = params[4] as List<ProductUiModel>
-        val sortBestToWorst = params[5] as Boolean
+        val showBackButton = params[1] as Boolean
+        val isLoading = params[2] as Boolean
+        val isRefreshed = params[3] as Boolean
+        val hasError = params[4] as Boolean
+        val productsList = params[5] as List<ProductUiModel>
+        val sortBestToWorst = params[6] as Boolean
 
         MainUiModel(
             showTopBar = showTopBar,
+            showBackButton = showBackButton,
             isLoading = isLoading,
             isRefreshed = isRefreshed,
             hasError = hasError,
@@ -57,6 +61,10 @@ class MainViewModel @Inject constructor(
 
     fun showTopBar() {
         _showTopBar.value = true
+    }
+
+    fun showBackButton(show: Boolean) {
+        _showBackButton.value = show
     }
 
     fun refreshProductsList() {
@@ -98,14 +106,19 @@ class MainViewModel @Inject constructor(
                 }
 
                 productsRepository.getProductReviews().forEach { productReview ->
-                    productsListFull.find { it.id == productReview.id }?.reviews =
-                        productReview.reviews.map {
-                            ReviewUiModel(
-                                name = it.name,
-                                text = it.text,
-                                rating = it.rating
-                            )
-                        }
+                    productsListFull.find { it.id == productReview.id }?.apply {
+                        var sumRating = 0.0
+                        reviews =
+                            productReview.reviews.map {
+                                sumRating += it.rating ?: 0.0
+                                ReviewUiModel(
+                                    name = it.name,
+                                    text = it.text,
+                                    rating = it.rating
+                                )
+                            }
+                        rating = sumRating / reviews.size
+                    }
                 }
 
                 sortReviewsByBestToWorst(sortBestToWorst = _sortBestToWorst.value)

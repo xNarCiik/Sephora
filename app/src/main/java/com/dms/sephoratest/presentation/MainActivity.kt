@@ -7,9 +7,14 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowLeft
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -27,6 +32,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -55,6 +61,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val snackbarHostState = remember { SnackbarHostState() }
             val scope = rememberCoroutineScope()
+            val navController = rememberNavController()
 
             val viewState by mainViewModel.viewState.collectAsState()
 
@@ -89,6 +96,18 @@ class MainActivity : ComponentActivity() {
                                         text = stringResource(id = R.string.app_name),
                                         style = MaterialTheme.typography.titleLarge
                                     )
+                                },
+                                navigationIcon = {
+                                    if (viewState.showBackButton) {
+                                        IconButton(onClick = { navController.popBackStack() }) {
+                                            Icon(
+                                                modifier = Modifier
+                                                    .size(size = 28.dp),
+                                                imageVector = Icons.AutoMirrored.Filled.ArrowLeft,
+                                                contentDescription = ""
+                                            )
+                                        }
+                                    }
                                 }
                             )
 
@@ -103,8 +122,6 @@ class MainActivity : ComponentActivity() {
                         .padding(innerPadding),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val navController = rememberNavController()
-
                     NavHost(
                         navController = navController,
                         startDestination = Screen.SplashScreen.route
@@ -135,8 +152,7 @@ class MainActivity : ComponentActivity() {
                                 it.arguments?.getLong(PRODUCT_ID_EXTRA) ?: 0 // Cannot be null
                             ProductDetailScreen(
                                 mainViewModel = mainViewModel,
-                                productId = productId,
-                                onButtonBackPressed = { navController.popBackStack() }
+                                productId = productId
                             )
                         }
                     }

@@ -2,6 +2,7 @@ package com.dms.sephoratest.presentation
 
 data class MainUiModel(
     val showTopBar: Boolean = false,
+    val showBackButton: Boolean = false,
     val isLoading: Boolean = false,
     val isRefreshed: Boolean = false,
     val hasError: Boolean = false,
@@ -17,7 +18,8 @@ data class ProductUiModel(
     val imageUrl: String,
     val isProductSet: Boolean,
     val isSpecialBrand: Boolean,
-    var reviews: List<ReviewUiModel> = arrayListOf()
+    var reviews: List<ReviewUiModel> = arrayListOf(),
+    var rating: Double? = null
 )
 
 data class ReviewUiModel(
