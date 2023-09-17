@@ -123,6 +123,8 @@ private fun MainContent(
                         .fillMaxWidth()
                         .weight(weight = 1f))
                 }
+            } else {
+                Spacer(modifier = Modifier.weight(weight = 1f))
             }
 
             Text(
