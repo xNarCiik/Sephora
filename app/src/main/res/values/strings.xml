@@ -12,7 +12,7 @@
     <string name="sort_by">"Trier par : %s"</string>
     <string name="positif_review">Avis positif</string>
     <string name="negatif_review">Avis négatif</string>
-    <string name="copyright">Développer par Damien Legagnoux.</string>
+    <string name="copyright">Développé par Damien Legagnoux.</string>
     <string name="hello">Bonjour,</string>
     <string name="welcome_to_sephora">Bienvenue chez Sephora</string>
     <string name="nb_review">(%s avis)</string>
