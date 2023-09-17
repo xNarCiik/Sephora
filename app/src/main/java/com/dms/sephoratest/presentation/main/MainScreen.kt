@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ErrorOutline
+import androidx.compose.material.icons.filled.HourglassEmpty
+import androidx.compose.material.icons.filled.SearchOff
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -108,13 +110,24 @@ private fun MainContent(
 private fun EmptyList(
     modifier: Modifier = Modifier
 ) {
-    // TODO UI FOR PRODUCTSLISTEMPTY
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Aucun résultat")
+        Icon(
+            modifier = Modifier.size(size = 60.dp),
+            imageVector = Icons.Filled.SearchOff,
+            contentDescription = null,
+            tint = Color.Gray
+        )
+
+        Text(
+            modifier = Modifier.padding(top = 6.dp),
+            text = "Aucun résultat",
+            color = Color.Gray,
+            style = MaterialTheme.typography.titleLarge
+        )
     }
 }
 
