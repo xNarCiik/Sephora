@@ -21,6 +21,7 @@ import com.dms.sephoratest.R
 import com.dms.sephoratest.presentation.ProductUiModel
 import com.dms.sephoratest.presentation.ProductsListMock
 import com.dms.sephoratest.presentation.ReviewUiModel
+import com.dms.sephoratest.presentation.core.RatingBar
 import java.text.DecimalFormat
 
 @Composable

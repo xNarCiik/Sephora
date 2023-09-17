@@ -1,4 +1,4 @@
-package com.dms.sephoratest.presentation.productdetail
+package com.dms.sephoratest.presentation.core
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size

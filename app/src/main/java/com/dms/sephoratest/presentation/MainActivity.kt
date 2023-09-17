@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -103,7 +103,7 @@ class MainActivity : ComponentActivity() {
                                             Icon(
                                                 modifier = Modifier
                                                     .size(size = 28.dp),
-                                                imageVector = Icons.AutoMirrored.Filled.ArrowLeft,
+                                                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                                                 contentDescription = ""
                                             )
                                         }

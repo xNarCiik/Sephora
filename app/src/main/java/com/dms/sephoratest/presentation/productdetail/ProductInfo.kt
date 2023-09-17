@@ -32,8 +32,8 @@ fun ProductInfo(
             modifier = Modifier.fillMaxWidth(),
             contentScale = ContentScale.FillWidth,
             model = product.imageUrl,
-            placeholder = painterResource(id = R.drawable.ic_launcher_foreground), // TODO change placeholder
-            error = painterResource(id = R.drawable.ic_launcher_foreground),
+            placeholder = painterResource(id = R.drawable.ic_load),
+            error = painterResource(id = R.drawable.ic_error),
             contentDescription = "product image",
         )
 

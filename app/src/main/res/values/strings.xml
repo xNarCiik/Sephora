@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">SEPHORA</string>
-    <string name="search">Search</string>
+    <string name="search">Cherchez un produit</string>
     <string name="snackback_error_get_products">Une erreur c\'est produite lors de la récupération des produits.</string>
     <string name="retry">Réessayer</string>
     <string name="buy">Ajouter au panier</string>
@@ -12,4 +12,8 @@
     <string name="sort_by">"Trier par : %s"</string>
     <string name="positif_review">Avis positif</string>
     <string name="negatif_review">Avis négatif</string>
+    <string name="copyright">Développer par Damien Legagnoux.</string>
+    <string name="hello">Bonjour,</string>
+    <string name="welcome_to_sephora">Bienvenue chez Sephora</string>
+    <string name="nb_review">(%s avis)</string>
 </resources>
