@@ -1,5 +1,6 @@
 package com.dms.sephoratest.presentation.productdetail
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -60,7 +61,11 @@ private fun ProductDetailContent(
     onSortRatingPressed: (Boolean) -> Unit,
     onAddToCart: (Long) -> Unit
 ) {
-    Column(modifier = Modifier.padding(bottom = 8.dp)) {
+    Column(
+        modifier = Modifier
+            .background(color = MaterialTheme.colorScheme.background)
+            .padding(bottom = 8.dp)
+    ) {
         ProductInfo(
             product = product
         )

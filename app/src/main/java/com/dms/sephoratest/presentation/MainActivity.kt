@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -128,7 +130,31 @@ class MainActivity : ComponentActivity() {
                                 navArgument(PRODUCT_ID_EXTRA) {
                                     type = NavType.LongType
                                 }
-                            )
+                            ),
+                            enterTransition = {
+                                slideIntoContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                                    animationSpec = tween(700)
+                                )
+                            },
+                            exitTransition = {
+                                slideOutOfContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Left,
+                                    animationSpec = tween(700)
+                                )
+                            },
+                            popEnterTransition = {
+                                slideIntoContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                                    animationSpec = tween(700)
+                                )
+                            },
+                            popExitTransition = {
+                                slideOutOfContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Companion.Right,
+                                    animationSpec = tween(700)
+                                )
+                            }
                         ) {
                             val productId =
                                 it.arguments?.getLong(PRODUCT_ID_EXTRA) ?: 0 // Cannot be null
