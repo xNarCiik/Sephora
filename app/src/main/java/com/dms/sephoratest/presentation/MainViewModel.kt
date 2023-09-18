@@ -68,38 +68,50 @@ class MainViewModel @Inject constructor(
     }
 
     fun showTopBar() {
-        _showTopBar.value = true
+        viewModelScope.launch(context = dispatcher) {
+            _showTopBar.value = true
+        }
     }
 
     fun showBackButton(show: Boolean) {
-        _showBackButton.value = show
+        viewModelScope.launch(context = dispatcher) {
+            _showBackButton.value = show
+        }
     }
 
     fun refreshProductsList() {
-        loadProductsList(isRefreshed = true)
+        viewModelScope.launch(context = dispatcher) {
+            loadProductsList(isRefreshed = true)
+        }
     }
 
     fun filterByName(name: String) {
-        updateProductsList(productsList = productsListFull.filter { it.name.contains(name) })
+        viewModelScope.launch(context = dispatcher) {
+            updateProductsList(productsList = productsListFull.filter { it.name.contains(name) })
+        }
     }
 
     fun sortReviewsByBestToWorst(sortBestToWorst: Boolean) {
-        _sortBestToWorst.value = sortBestToWorst
-        productsListFull.map { productUiModel ->
-            productUiModel.reviews =
-                if (sortBestToWorst) productUiModel.reviews.sortedByDescending { it.rating }
-                else productUiModel.reviews.sortedBy { it.rating }
+        viewModelScope.launch(context = dispatcher) {
+            _sortBestToWorst.value = sortBestToWorst
+            productsListFull.map { productUiModel ->
+                productUiModel.reviews =
+                    if (sortBestToWorst) productUiModel.reviews.sortedByDescending { it.rating }
+                    else productUiModel.reviews.sortedBy { it.rating }
+            }
+            updateProductsList(productsList = productsListFull)
         }
-        updateProductsList(productsList = productsListFull)
     }
 
     fun addToCart(productId: Long) {
-        productsListFull.find { it.id == productId }?.let {
-            _cartList.value =
-                arrayListOf<ProductUiModel>().apply {
-                    addAll(_cartList.value)
-                    add(it)
-                }
+        viewModelScope.launch(context = dispatcher) {
+            productsListFull.find { it.id == productId }?.let {
+                _cartList.value =
+                    arrayListOf<ProductUiModel>().apply {
+                        addAll(_cartList.value)
+                        add(it)
+                    }
+            }
         }
     }
 
@@ -150,11 +162,15 @@ class MainViewModel @Inject constructor(
     }
 
     private fun loadingFinished() {
-        _isRefreshed.value = false
-        _isLoading.value = false
+        viewModelScope.launch(context = dispatcher) {
+            _isRefreshed.value = false
+            _isLoading.value = false
+        }
     }
 
     private fun updateProductsList(productsList: List<ProductUiModel>) {
-        _productsList.value = productsList
+        viewModelScope.launch(context = dispatcher) {
+            _productsList.value = productsList
+        }
     }
 }
