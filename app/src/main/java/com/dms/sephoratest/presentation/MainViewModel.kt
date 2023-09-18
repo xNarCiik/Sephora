@@ -1,5 +1,6 @@
 package com.dms.sephoratest.presentation
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dms.sephoratest.domain.usecase.GetProductReviewsUseCase
@@ -30,6 +31,10 @@ class MainViewModel @Inject constructor(
     private var _cartList = MutableStateFlow<ArrayList<ProductUiModel>>(value = arrayListOf())
 
     private var productsListFull = listOf<ProductUiModel>()
+
+    private companion object {
+        const val TAG = "MainViewModel"
+    }
 
     @Suppress("UNCHECKED_CAST")
     val viewState = combine(
@@ -154,6 +159,7 @@ class MainViewModel @Inject constructor(
                 sortReviewsByBestToWorst(sortBestToWorst = _sortBestToWorst.value)
                 loadingFinished()
             } catch (exception: Exception) {
+                Log.e(TAG, "Error when load products list : ${exception.message}")
                 _hasError.value = true
                 updateProductsList(productsList = arrayListOf())
                 loadingFinished()

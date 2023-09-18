@@ -1,7 +1,6 @@
 package com.dms.sephoratest
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.dms.sephoratest.domain.model.Product
 import com.dms.sephoratest.domain.usecase.GetProductReviewsUseCase
 import com.dms.sephoratest.domain.usecase.GetProductsListUseCase
 import com.dms.sephoratest.presentation.MainViewModel
@@ -27,37 +26,7 @@ class MainViewModelTest {
 
     private lateinit var getProductsListUseCase: GetProductsListUseCase
     private lateinit var getProductReviewsUseCase: GetProductReviewsUseCase
-
-    private var fakeProducts = arrayListOf(
-        Product(
-            id = 0L,
-            name = "product 1",
-            description = "description 1",
-            price = 150.0,
-            imageUrl = "",
-            isProductSet = false,
-            isSpecialBrand = false
-        ),
-        Product(
-            id = 1L,
-            name = "product 2",
-            description = "description 2",
-            price = 150.0,
-            imageUrl = "",
-            isProductSet = false,
-            isSpecialBrand = false
-        ),
-        Product(
-            id = 3L,
-            name = "product 3",
-            "description 3",
-            price = 150.0,
-            imageUrl = "",
-            isProductSet = false,
-            isSpecialBrand = false
-        )
-    )
-
+    
     @Before
     fun setUp() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
@@ -66,7 +35,7 @@ class MainViewModelTest {
         getProductReviewsUseCase = mockk()
 
         coEvery { getProductsListUseCase.run() } returns fakeProducts
-        coEvery { getProductReviewsUseCase.run() } returns arrayListOf()
+        coEvery { getProductReviewsUseCase.run() } returns fakeReviews
 
         viewModel = MainViewModel(
             getProductsListUseCase = getProductsListUseCase,
@@ -131,8 +100,6 @@ class MainViewModelTest {
 
     @Test
     fun loadListProductTest() = runTest {
-        coEvery { getProductReviewsUseCase.run() } returns arrayListOf()
-
         val job = launch {
             viewModel.viewState.collect { }
         }
@@ -147,9 +114,23 @@ class MainViewModelTest {
     }
 
     @Test
-    fun addToCartListTest() = runTest {
-        coEvery { getProductsListUseCase.run() } returns fakeProducts
+    fun loadListProductReviewTest() = runTest {
+        val job = launch {
+            viewModel.viewState.collect { }
+        }
+        // By default, we don't have any reviews loaded
+        assert(viewModel.viewState.value.productsList.isEmpty())
 
+        advanceUntilIdle()
+
+        // Test if we have reviews in first product
+        assert(viewModel.viewState.value.productsList.first().reviews.isNotEmpty())
+
+        job.cancel()
+    }
+
+    @Test
+    fun addToCartListTest() = runTest {
         val job = launch {
             viewModel.viewState.collect { }
         }
@@ -192,6 +173,27 @@ class MainViewModelTest {
         // By default, we don't have any products loaded
         assert(!viewModel.viewState.value.hasError)
 
+        coEvery { getProductsListUseCase.run() }.throws(Exception())
+        viewModel.refreshProductsList() // Refresh list with an exception
+
+        advanceUntilIdle()
+
+        assert(viewModel.viewState.value.hasError)
+
+        job.cancel()
+    }
+
+    @Test
+    fun errorWhenLoadProductsReviewsTest() = runTest {
+        advanceUntilIdle() // Waiting first load result
+
+        val job = launch {
+            viewModel.viewState.collect { }
+        }
+
+        // By default, we don't have any products loaded
+        assert(!viewModel.viewState.value.hasError)
+
         coEvery { getProductReviewsUseCase.run() }.throws(Exception())
         viewModel.refreshProductsList() // Refresh list with an exception
 
@@ -207,18 +209,41 @@ class MainViewModelTest {
         val job = launch {
             viewModel.viewState.collect { }
         }
+        advanceUntilIdle()
         // By default, we sort review to best to worst
         assert(viewModel.viewState.value.sortBestToWorst)
+
+        // Test if list is correctly sorted
+        assert(viewModel.viewState.value.productsList.first().reviews.first().name == "Jane Doe")
+        assert(viewModel.viewState.value.productsList.first().reviews[1].name == null)
+        assert(viewModel.viewState.value.productsList.first().reviews[2].name == "Michel Pakontan")
 
         // Test update value to false
         viewModel.sortReviewsByBestToWorst(sortBestToWorst = false)
         advanceUntilIdle()
         assert(!viewModel.viewState.value.sortBestToWorst)
 
+        // Test if list is correctly sorted
+        assert(viewModel.viewState.value.productsList.first().reviews.first().name == "Michel Pakontan")
+        assert(viewModel.viewState.value.productsList.first().reviews[1].name == null)
+        assert(viewModel.viewState.value.productsList.first().reviews[2].name == "Jane Doe")
+
         // Test revert back to true
         viewModel.sortReviewsByBestToWorst(sortBestToWorst = true)
         advanceUntilIdle()
         assert(viewModel.viewState.value.sortBestToWorst)
+
+        job.cancel()
+    }
+
+    @Test
+    fun computeRatingSumReviewsTest() = runTest {
+        val job = launch {
+            viewModel.viewState.collect { }
+        }
+
+        advanceUntilIdle()
+        assertEquals(2.5, viewModel.viewState.value.productsList.first().rating)
 
         job.cancel()
     }
