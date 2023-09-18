@@ -65,6 +65,9 @@ class MainViewModelTest {
         getProductsListUseCase = mockk()
         getProductReviewsUseCase = mockk()
 
+        coEvery { getProductsListUseCase.run() } returns fakeProducts
+        coEvery { getProductReviewsUseCase.run() } returns arrayListOf()
+
         viewModel = MainViewModel(
             getProductsListUseCase = getProductsListUseCase,
             getProductReviewsUseCase = getProductReviewsUseCase,
@@ -110,9 +113,6 @@ class MainViewModelTest {
 
     @Test
     fun isLoadingTest() = runTest {
-        coEvery { getProductsListUseCase.run() } returns fakeProducts
-        coEvery { getProductReviewsUseCase.run() } returns arrayListOf()
-
         val job = launch {
             viewModel.viewState.collect {}
         }
@@ -131,7 +131,6 @@ class MainViewModelTest {
 
     @Test
     fun loadListProductTest() = runTest {
-        coEvery { getProductsListUseCase.run() } returns fakeProducts
         coEvery { getProductReviewsUseCase.run() } returns arrayListOf()
 
         val job = launch {
@@ -184,13 +183,17 @@ class MainViewModelTest {
 
     @Test
     fun errorWhenLoadProductsTest() = runTest {
-        coEvery { getProductsListUseCase.run() }.throws(Exception())
+        advanceUntilIdle() // Waiting first load result
 
         val job = launch {
             viewModel.viewState.collect { }
         }
+
         // By default, we don't have any products loaded
         assert(!viewModel.viewState.value.hasError)
+
+        coEvery { getProductReviewsUseCase.run() }.throws(Exception())
+        viewModel.refreshProductsList() // Refresh list with an exception
 
         advanceUntilIdle()
 
