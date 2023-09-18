@@ -2,8 +2,10 @@ package com.dms.sephoratest.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.dms.sephoratest.domain.repository.ProductsRepository
+import com.dms.sephoratest.domain.usecase.GetProductReviewsUseCase
+import com.dms.sephoratest.domain.usecase.GetProductsListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -13,7 +15,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val productsRepository: ProductsRepository
+    private val getProductsListUseCase: GetProductsListUseCase,
+    private val getProductReviewsUseCase: GetProductReviewsUseCase,
+    val dispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
     private var _showTopBar = MutableStateFlow(value = false)
@@ -100,14 +104,14 @@ class MainViewModel @Inject constructor(
     }
 
     private fun loadProductsList(isRefreshed: Boolean = false) {
-        viewModelScope.launch {
+        viewModelScope.launch(context = dispatcher) {
             _isLoading.value = true
             _hasError.value = false
             _isRefreshed.value = isRefreshed
 
             try {
                 // Transform Products list to ProductUiModel list
-                productsListFull = productsRepository.getProductsList().map {
+                productsListFull = getProductsListUseCase.run().map {
                     ProductUiModel(
                         id = it.id,
                         name = it.name,
@@ -119,7 +123,7 @@ class MainViewModel @Inject constructor(
                     )
                 }
 
-                productsRepository.getProductReviews().forEach { productReview ->
+                getProductReviewsUseCase.run().forEach { productReview ->
                     productsListFull.find { it.id == productReview.id }?.apply {
                         var sumRating = 0.0
                         reviews =
